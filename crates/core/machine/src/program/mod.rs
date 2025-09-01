@@ -115,6 +115,8 @@ impl<F: PrimeField32> MachineAir<F> for ProgramChip {
             instruction_counts.entry(pc).and_modify(|count| *count += 1).or_insert(1);
         });
 
+        println!("program chip: pc_base: {}", input.program.pc_base);
+
         let mut rows = input
             .program
             .instructions

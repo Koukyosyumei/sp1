@@ -38,6 +38,8 @@ pub struct Program {
     pub preprocessed_shape: Option<Shape<RiscvAirId>>,
 }
 
+const OFFSET: u32 = 4;
+
 impl Program {
     /// Create a new [Program].
     #[must_use]
@@ -58,7 +60,12 @@ impl Program {
     /// This function may return an error if the ELF is not valid.
     pub fn from(input: &[u8]) -> eyre::Result<Self> {
         // Decode the bytes as an ELF.
-        let elf = Elf::decode(input)?;
+        let mut elf = Elf::decode(input)?;
+
+        // prime number = 2013265921
+        println!("elf.pc_base, elf.pc_start: {}, {}", elf.pc_base, elf.pc_start);
+        elf.pc_base += OFFSET;
+        elf.pc_start += OFFSET;
 
         // Transpile the RV32IM instructions.
         let instructions = transpile(&elf.instructions);
@@ -97,7 +104,7 @@ impl Program {
     #[must_use]
     /// Fetch the instruction at the given program counter.
     pub fn fetch(&self, pc: u32) -> &Instruction {
-        let idx = ((pc - self.pc_base) / 4) as usize;
+        let idx = ((pc - (self.pc_base - OFFSET)) / 4) as usize;
         &self.instructions[idx]
     }
 }
