@@ -38,7 +38,7 @@ pub struct Program {
     pub preprocessed_shape: Option<Shape<RiscvAirId>>,
 }
 
-const OFFSET: u32 = 4;
+const OFFSET: u32 = 0; //502790556 * 4;
 
 impl Program {
     /// Create a new [Program].
@@ -63,6 +63,7 @@ impl Program {
         let mut elf = Elf::decode(input)?;
 
         // prime number = 2013265921
+        //                2103692
         println!("elf.pc_base, elf.pc_start: {}, {}", elf.pc_base, elf.pc_start);
         elf.pc_base += OFFSET;
         elf.pc_start += OFFSET;
