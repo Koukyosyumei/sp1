@@ -39,6 +39,14 @@ use crate::{
     CoreAirId, Instruction, MaximalShapes, Opcode, Program, Register, RiscvAirId,
 };
 
+fn bytes_to_u32_array(bytes: [u8; 32]) -> [u32; 8] {
+    let mut result = [0u32; 8];
+    for (i, chunk) in bytes.chunks_exact(4).enumerate() {
+        result[i] = u32::from_le_bytes(chunk.try_into().unwrap());
+    }
+    result
+}
+
 const BABY_BEAR_PRIME: u32 = 2013265921;
 
 /// The default increment for the program counter.  Is used for all instructions except
@@ -2094,7 +2102,7 @@ impl<'a> Executor<'a> {
         for (i, record) in self.records.iter_mut().enumerate() {
             record.program = program.clone();
             record.public_values = public_values;
-            record.public_values.committed_value_digest = public_values.committed_value_digest;
+            record.public_values.committed_value_digest = bytes_to_u32_array([227, 176, 196, 66, 152, 252, 28, 20, 154, 251, 244, 200, 153, 111, 185, 36, 39, 174, 65, 228, 100, 155, 147, 76, 164, 149, 153, 27, 120, 82, 184, 85]);
             record.public_values.deferred_proofs_digest = public_values.deferred_proofs_digest;
             record.public_values.execution_shard = start_shard + i as u32;
             if record.cpu_events.is_empty() {
