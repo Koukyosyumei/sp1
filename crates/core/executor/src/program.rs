@@ -38,7 +38,7 @@ pub struct Program {
     pub preprocessed_shape: Option<Shape<RiscvAirId>>,
 }
 
-const OFFSET: u32 = 0; //502790556 * 4;
+const OFFSET: u32 = 2011164665; //502790556 * 4;
 
 impl Program {
     /// Create a new [Program].
@@ -105,7 +105,7 @@ impl Program {
     #[must_use]
     /// Fetch the instruction at the given program counter.
     pub fn fetch(&self, pc: u32) -> &Instruction {
-        let idx = ((pc - (self.pc_base - OFFSET)) / 4) as usize;
+        let idx = ((pc - self.pc_base) / 4) as usize;
         &self.instructions[idx]
     }
 }
