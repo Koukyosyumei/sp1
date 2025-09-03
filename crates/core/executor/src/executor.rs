@@ -39,6 +39,8 @@ use crate::{
     CoreAirId, Instruction, MaximalShapes, Opcode, Program, Register, RiscvAirId,
 };
 
+const BABY_BEAR_PRIME: u32 = 2013265921;
+
 /// The default increment for the program counter.  Is used for all instructions except
 /// for branches and jumps.
 pub const DEFAULT_PC_INC: u32 = 4;
@@ -1814,7 +1816,7 @@ impl<'a> Executor<'a> {
             }
         }
 
-        let done = self.state.pc == 0 ||
+        let done = self.state.pc % BABYBEAR_PRIME == 0 ||
             self.state.pc.wrapping_sub(self.program.pc_base) >=
                 (self.program.instructions.len() * 4) as u32;
         if done && self.unconstrained {
@@ -2032,8 +2034,11 @@ impl<'a> Executor<'a> {
         let mut current_shard = self.state.current_shard;
         let mut num_shards_executed = 0;
         loop {
+            println!("clk: {}, pc: {}", self.state.clk, self.state.pc);
             if self.execute_cycle()? {
                 done = true;
+                println!("clk: {}, pc: {}", self.state.clk, self.state.pc);
+                println!("---------------");
                 break;
             }
 
@@ -2094,11 +2099,11 @@ impl<'a> Executor<'a> {
             record.public_values.execution_shard = start_shard + i as u32;
             if record.cpu_events.is_empty() {
                 record.public_values.start_pc = last_next_pc;
-                record.public_values.next_pc = last_next_pc;
+                record.public_values.next_pc = last_next_pc % BABYBEAR_PRIME;
                 record.public_values.exit_code = last_exit_code;
             } else {
                 record.public_values.start_pc = record.cpu_events[0].pc;
-                record.public_values.next_pc = record.cpu_events.last().unwrap().next_pc;
+                record.public_values.next_pc = record.cpu_events.last().unwrap().next_pc % BABYBEAR_PRIME;
                 record.public_values.exit_code = record.cpu_events.last().unwrap().exit_code;
                 last_next_pc = record.public_values.next_pc;
                 last_exit_code = record.public_values.exit_code;

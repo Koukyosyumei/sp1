@@ -20,6 +20,8 @@ use sp1_stark::{
     InteractionKind,
 };
 
+const OFFSET: u32 = 2011164665;
+
 /// A program that can be executed by the SP1 zkVM.
 ///
 /// Contains a series of instructions along with the initial memory image. It also contains the
@@ -66,8 +68,8 @@ impl Program {
         // Return the program.
         Ok(Program {
             instructions,
-            pc_start: elf.pc_start,
-            pc_base: elf.pc_base,
+            pc_start: elf.pc_start + OFFSET,
+            pc_base: elf.pc_base + OFFSET,
             memory_image: elf.memory_image,
             preprocessed_shape: None,
         })
