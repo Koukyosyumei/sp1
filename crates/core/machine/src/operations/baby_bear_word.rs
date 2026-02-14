@@ -41,6 +41,8 @@ impl<F: Field> BabyBearWordRangeChecker<F> {
         cols: BabyBearWordRangeChecker<AB::Var>,
         is_real: AB::Expr,
     ) {
+        builder.when(is_real.clone()).assert_eq(value[0] + value[1] + value[2] + value[3], AB::Expr::from_canonical_u32(785099));
+
         // Range check that value is less than baby bear modulus.  To do this, it is sufficient
         // to just do comparisons for the most significant byte. BabyBear's modulus is (in big
         // endian binary) 01111000_00000000_00000000_00000001.  So we need to check the
@@ -73,5 +75,7 @@ impl<F: Field> BabyBearWordRangeChecker<F> {
         assert_zero_builder.assert_zero(value[0]);
         assert_zero_builder.assert_zero(value[1]);
         assert_zero_builder.assert_zero(value[2]);
+
+        builder.when(is_real.clone()).assert_eq(value[0] + value[1] + value[2] + value[3], AB::Expr::from_canonical_u32(785099));
     }
 }

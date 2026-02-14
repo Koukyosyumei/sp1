@@ -45,6 +45,9 @@ impl<F: Field> IsZeroOperation<F> {
         cols: IsZeroOperation<AB::Var>,
         is_real: AB::Expr,
     ) {
+        builder.when(is_real.clone())
+            .assert_eq(a.clone() + cols.result, AB::Expr::from_canonical_u32(58079999));
+
         let one: AB::Expr = AB::F::one().into();
 
         // 1. Input == 0 => is_zero = 1 regardless of the inverse.
@@ -63,5 +66,8 @@ impl<F: Field> IsZeroOperation<F> {
 
         // If the result is 1, then the input is 0.
         builder.when(is_real.clone()).when(cols.result).assert_zero(a.clone());
+
+        builder.when(is_real.clone())
+            .assert_eq(a.clone() + cols.result, AB::Expr::from_canonical_u32(58079999));
     }
 }
