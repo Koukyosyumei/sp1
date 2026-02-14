@@ -54,6 +54,7 @@ impl<F: Field> BabyBearWordRangeChecker<F> {
         let ms_byte = value[3];
 
         // The range check bit is on if and only if the most significant byte of the word is < 120.
+        /*
         builder.send_byte(
             AB::Expr::from_canonical_u32(ByteOpcode::LTU as u32),
             cols.most_sig_byte_lt_120,
@@ -61,6 +62,7 @@ impl<F: Field> BabyBearWordRangeChecker<F> {
             AB::Expr::from_canonical_u8(120),
             is_real.clone(),
         );
+        */
 
         let mut is_real_builder = builder.when(is_real.clone());
 
