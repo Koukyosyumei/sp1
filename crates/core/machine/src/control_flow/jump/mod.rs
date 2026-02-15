@@ -27,12 +27,37 @@ mod tests {
         MachineProver, Val,
     };
 
+    use crate::utils::run_test;
     use crate::{
         control_flow::{JumpChip, JumpColumns},
         io::SP1Stdin,
         riscv::RiscvAir,
         utils::run_malicious_test,
     };
+
+    #[test]
+    fn test_jumps() {
+        let mut jump_instructions = [
+            vec![Instruction::new(Opcode::JAL, 29, 8, 0, true, true)],
+            vec![Instruction::new(Opcode::JAL, 29, 2013265920, 0, true, true)],
+            vec![Instruction::new(Opcode::JAL, 29, 2013265921, 0, true, true)]
+        ];
+
+        for instructions in jump_instructions.iter_mut() {
+            instructions.extend(vec![
+                Instruction::new(Opcode::ADD, 30, 0, 5, false, true),
+                Instruction::new(Opcode::ADD, 28, 0, 5, false, true),
+                Instruction::new(Opcode::ADD, 28, 0, 5, false, true),
+            ]);
+            let program = Program::new(instructions.to_vec(), 0, 0);
+            let stdin = SP1Stdin::new();
+
+            type P = CpuProver<BabyBearPoseidon2, RiscvAir<BabyBear>>;
+            let result =
+                run_test::<P>(program.clone(), stdin);
+            assert!(result.is_ok(), "{}", format!("program: {:?}, result: {:?}", program, result));
+        }
+    }
 
     #[test]
     fn test_malicious_jumps() {
